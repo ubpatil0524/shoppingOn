@@ -1,4 +1,4 @@
-package com.musicon
+package com.ShoppingOn
 
 import android.app.Application
 import com.facebook.react.PackageList
