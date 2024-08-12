@@ -1,283 +1,303 @@
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {useTheme} from '@react-navigation/native';
-import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
-// import {RangeSlider} from './RangeSlider';
+import {View, Text, TouchableOpacity} from 'react-native';
+import React, {ReactNode, useState} from 'react';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import {useTheme} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const FilterView = () => {
-  const {colors} = useTheme();
-  const [sortByIndex, setsortByIndex] = useState(0);
-  const [categoriesIndex, setCategoriesIndex] = useState(0);
-  const [colorsIndex, setColorsIndex] = useState(0);
-  const [sizeIndex, setSizeIndex] = useState(0);
-
+  const MIN_PRICE = 0;
+  const MAX_PRICE = 500;
+  const [minPrice, setMinPrice] = useState(50);
+  const [maxPrice, setMaxPrice] = useState(250);
   const theme = useTheme();
-  const SortByList = [
-    'Featured',
-    'Price: Low to High',
-    'Price: High to Low',
-    'Best Sellers',
+
+  const COLORS = [
+    {
+      color: 'red',
+      label: 'Red',
+      itemCount: 4,
+    },
+    {
+      color: 'blue',
+      label: 'Blue',
+      itemCount: 2,
+    },
+    {
+      color: 'yellow',
+      label: 'Yellow',
+      itemCount: 6,
+    },
+    {
+      color: 'purple',
+      label: 'Purple',
+      itemCount: 10,
+    },
   ];
 
-  const CategoriesList = ['Men', 'Boys', 'Women', 'Girls'];
-
-  const ColorsList = [
-    'Black',
-    'Grey',
-    'White',
-    'Brown',
-    'Beige',
-    'Red',
-    'Pink',
-    'Yellow',
-    'Multi',
+  const SLEEVES = [
+    {
+      id: 'sortsleeve',
+      label: 'Sort Sleeve',
+      itemCount: 20,
+    },
+    {
+      id: 'longsleeve',
+      label: 'Long Sleeve',
+      itemCount: 100,
+    },
+    {
+      id: 'sleeveless',
+      label: 'Sleeve Less',
+      itemCount: 60,
+    },
   ];
-
-  const SizeList = ['XS', 'S', 'S', 'M', 'L', 'XL', '2XL', '3XL', 'Free Size'];
 
   return (
-    <View>
-      <Text
-        style={{
-          fontWeight: '700',
-          fontSize: 22,
-          color: colors.text,
-          padding: 10,
-          textAlign: 'center',
-        }}>
-        Select Filter
-      </Text>
+    <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
+        <View style={{paddingVertical: 24, gap: 24, flex: 1}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 24,
+            }}>
+            <Text
+              style={{
+                flex: 1,
+                fontSize: 20,
+                fontWeight: '700',
+                color: theme.colors.text,
+              }}>
+              Filter
+            </Text>
+            <TouchableOpacity>
+              <Text>Reset</Text>
+            </TouchableOpacity>
+          </View>
 
-      {/* Sort By filter  */}
+          {/* Range Selector  */}
 
-      <View>
-        <Text
-          style={{
-            fontWeight: '700',
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          }}>
-          Sort by
-        </Text>
+          <View style={{paddingHorizontal: 24}}>
+            <Text style={{marginBottom: 24}}>Price Selector</Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <FlatList
-            data={SortByList}
-            horizontal
-            contentContainerStyle={{paddingHorizontal: 10, gap: 10}}
-            renderItem={({item, index}) => {
-              const isSelected = sortByIndex === index;
-              return (
-                <TouchableOpacity
-                  onPress={() => setsortByIndex(index)}
-                  style={{
-                    backgroundColor: isSelected ? colors.primary : colors.card,
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
-                    borderRadius: 100,
-                  }}>
-                  <Text
-                    style={{
-                      color: isSelected ? colors.background : colors.text,
-                      opacity: isSelected ? 1 : 0.5,
-                      fontSize: 13,
-                      fontWeight: '700',
-                    }}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </ScrollView>
-      </View>
-
-      {/* Categories Filter  */}
-      <View>
-        <Text
-          style={{
-            fontWeight: '700',
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          }}>
-          Categories
-        </Text>
-
-        <FlatList
-          data={CategoriesList}
-          horizontal
-          contentContainerStyle={{paddingHorizontal: 10, gap: 10}}
-          renderItem={({item, index}) => {
-            const isSelected = categoriesIndex === index;
-            return (
-              <TouchableOpacity
-                onPress={() => setCategoriesIndex(index)}
+            <View
+              style={{
+                height: 1,
+                width: '100%',
+                backgroundColor: theme.colors.border,
+                position: 'relative',
+              }}>
+              <View
                 style={{
-                  backgroundColor: isSelected ? colors.primary : colors.card,
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                  borderRadius: 100,
-                }}>
-                <Text
-                  style={{
-                    color: isSelected ? colors.background : colors.text,
-                    opacity: isSelected ? 1 : 0.5,
-                    fontSize: 13,
-                    fontWeight: '700',
-                  }}>
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </View>
+                  position: 'absolute',
+                  left: `${(100 * minPrice) / MAX_PRICE}%`,
+                  width: `${(100 * (maxPrice - minPrice)) / MAX_PRICE}%`,
+                  height: '100%',
+                  backgroundColor: theme.colors.primary,
+                }}
+              />
 
-      {/* Colors filter  */}
-      <View>
-        <Text
+              <View style={{position: 'absolute', left: '10%'}}>
+                <SliderHandle />
+              </View>
+              <View style={{position: 'absolute', left: '50%'}}>
+                <SliderHandle />
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 12,
+              }}>
+              <Text style={{color: theme.colors.text, opacity: 0.5}}>
+                ${MIN_PRICE}
+              </Text>
+              <Text style={{color: theme.colors.text, opacity: 0.5}}>
+                ${MAX_PRICE}
+              </Text>
+            </View>
+          </View>
+
+          {/* Sport Catrgory Filter  */}
+          <View style={{paddingHorizontal: 24}}>
+            <Text style={{fontSize: 16, fontWeight: '600', marginBottom: 12}}>
+              Sports
+            </Text>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
+              {new Array(8).fill('').map((_, i) => {
+                const isSelected = i === 0;
+                return <Chip itemCount={i} label="item" isSelected={i === 0} />;
+              })}
+            </View>
+          </View>
+
+          {/* Colors Catrgory Filter  */}
+          <View style={{paddingHorizontal: 24}}>
+            <Text style={{fontSize: 16, fontWeight: '600', marginBottom: 12}}>
+              Color
+            </Text>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
+              {COLORS.map((item, i) => {
+                const isSelected = i === 0;
+                return (
+                  <Chip
+                    itemCount={item.itemCount}
+                    label={item.label}
+                    left={
+                      <View
+                        style={{
+                          backgroundColor: item.color,
+                          width: 8,
+                          height: 8,
+                          borderRadius: 10,
+                        }}
+                      />
+                    }
+                    isSelected={i === 0}
+                  />
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Sleeves Catrgory Filter  */}
+          <View style={{paddingHorizontal: 24}}>
+            <Text style={{fontSize: 16, fontWeight: '600', marginBottom: 12}}>
+              Sleeves
+            </Text>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
+              {SLEEVES.map((item, i) => {
+                const isSelected = i === 0;
+                return (
+                  <Chip
+                    itemCount={item.itemCount}
+                    label={item.label}
+                    isSelected={i === 0}
+                  />
+                );
+              })}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Button */}
+
+      <SafeAreaView edges={['bottom']} style={{padding: 24}}>
+        <TouchableOpacity
           style={{
-            fontWeight: '700',
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          }}>
-          Colors
-        </Text>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <FlatList
-            data={ColorsList}
-            horizontal
-            contentContainerStyle={{paddingHorizontal: 10, gap: 10}}
-            renderItem={({item, index}) => {
-              const isSelected = colorsIndex === index;
-              return (
-                <TouchableOpacity
-                  onPress={() => setColorsIndex(index)}
-                  style={{
-                    backgroundColor: isSelected ? colors.primary : colors.card,
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
-                    borderRadius: 100,
-                  }}>
-                  <Text
-                    style={{
-                      color: isSelected ? colors.background : colors.text,
-                      opacity: isSelected ? 1 : 0.5,
-                      fontSize: 13,
-                      fontWeight: '700',
-                    }}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </ScrollView>
-      </View>
-
-      {/* Sizes filter  */}
-      <View>
-        <Text
-          style={{
-            fontWeight: '700',
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          }}>
-          Sizes
-        </Text>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <FlatList
-            data={SizeList}
-            horizontal
-            contentContainerStyle={{paddingHorizontal: 10, gap: 10}}
-            renderItem={({item, index}) => {
-              const isSelected = sizeIndex === index;
-              return (
-                <TouchableOpacity
-                  onPress={() => setSizeIndex(index)}
-                  style={{
-                    backgroundColor: isSelected ? colors.primary : colors.card,
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
-                    borderRadius: 100,
-                  }}>
-                  <Text
-                    style={{
-                      color: isSelected ? colors.background : colors.text,
-                      opacity: isSelected ? 1 : 0.5,
-                      fontSize: 13,
-                      fontWeight: '700',
-                    }}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </ScrollView>
-      </View>
-
-      {/* Price filter  */}
-      <View>
-        <Text
-          style={{
-            fontWeight: '700',
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          }}>
-          Price
-        </Text>
-      </View>
-
-      {/* 
-      <View>
-        <RangeSlider sliderWidth={300} min={10} max={500} step={1} />
-      </View> */}
-
-      <TouchableOpacity
-        style={{
-          backgroundColor: theme.colors.primary,
-          height: 64,
-          borderRadius: 64,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-        }}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: '600',
-            color: colors.background,
-          }}>
-          Apply Filter
-        </Text>
-
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            width: 40,
-            aspectRatio: 1,
-            borderRadius: 40,
+            backgroundColor: theme.colors.primary,
+            height: 64,
+            borderRadius: 64,
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'absolute',
-            top: 12,
-            right: 12,
-            bottom: 12,
+            position: 'relative',
           }}>
-          <Icons name="arrow-forward" size={24} color={theme.colors.text} />
-        </View>
-      </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '600',
+              color: theme.colors.background,
+            }}>
+            Apply Filter
+          </Text>
+
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              width: 40,
+              aspectRatio: 1,
+              borderRadius: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              bottom: 12,
+            }}>
+            <Icons name="arrow-forward" size={24} color={theme.colors.text} />
+          </View>
+        </TouchableOpacity>
+      </SafeAreaView>
     </View>
   );
 };
 
 export default FilterView;
+
+const SliderHandle = () => {
+  const theme = useTheme();
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        left: '10%',
+        height: 24,
+        aspectRatio: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 100,
+        borderColor: theme.colors.primary,
+        borderWidth: 2,
+        backgroundColor: theme.colors.background,
+        transform: [
+          {
+            translateX: -12,
+          },
+          {
+            translateY: -12,
+          },
+        ],
+      }}>
+      <View
+        style={{
+          width: 3,
+          height: 3,
+          borderRadius: 10,
+          backgroundColor: theme.colors.primary,
+        }}></View>
+    </View>
+  );
+};
+
+const Chip = ({
+  isSelected,
+  label,
+  itemCount,
+  left,
+}: {
+  isSelected: boolean;
+  label: string;
+  itemCount: number;
+  left?: ReactNode;
+}) => {
+  const theme = useTheme();
+  return (
+    <View
+      style={{
+        padding: 16,
+        paddingVertical: 8,
+        borderRadius: 100,
+        backgroundColor: isSelected
+          ? theme.colors.text
+          : theme.colors.background,
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+      {!!left && <View style={{marginRight: 4}}>{left}</View>}
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: '600',
+          color: isSelected ? theme.colors.background : theme.colors.text,
+        }}>
+        {label} [{itemCount}]
+      </Text>
+    </View>
+  );
+};
