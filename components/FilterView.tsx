@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
 // import {RangeSlider} from './RangeSlider';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const FilterView = () => {
   const {colors} = useTheme();
@@ -11,6 +12,7 @@ const FilterView = () => {
   const [colorsIndex, setColorsIndex] = useState(0);
   const [sizeIndex, setSizeIndex] = useState(0);
 
+  const theme = useTheme();
   const SortByList = [
     'Featured',
     'Price: Low to High',
@@ -242,22 +244,37 @@ const FilterView = () => {
 
       <TouchableOpacity
         style={{
-          width: 200,
-          height: 45,
-          backgroundColor: colors.text,
-          borderRadius: 40,
+          backgroundColor: theme.colors.primary,
+          height: 64,
+          borderRadius: 64,
+          alignItems: 'center',
           justifyContent: 'center',
-          alignSelf: 'center',
+          position: 'relative',
         }}>
         <Text
           style={{
-            fontSize: 25,
-            fontWeight: 'bold',
+            fontSize: 16,
+            fontWeight: '600',
             color: colors.background,
-            textAlign: 'center',
           }}>
-          Apply
+          Apply Filter
         </Text>
+
+        <View
+          style={{
+            backgroundColor: theme.colors.card,
+            width: 40,
+            aspectRatio: 1,
+            borderRadius: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            bottom: 12,
+          }}>
+          <Icons name="arrow-forward" size={24} color={theme.colors.text} />
+        </View>
       </TouchableOpacity>
     </View>
   );
