@@ -28,42 +28,48 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
     'many more',
   ];
 
-  const MESONARY_LIST_DATA = [
+  interface Item {
+    imageUrl: string;
+    title: string;
+    price: number;
+  }
+
+  const MESONARY_LIST_DATA: Item[] = [
     {
       imageUrl:
         'https://images.unsplash.com/photo-1503001358144-8d7f2c1db9f5?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
+      title: 'Puma Everyday ',
       price: 160,
     },
     {
       imageUrl:
         'https://plus.unsplash.com/premium_photo-1672239496290-5061cfee7ebb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
-      price: 160,
+      title: 'Puma  Hussle',
+      price: 260,
     },
     {
       imageUrl:
         'https://images.unsplash.com/photo-1496346236646-50e985b31ea4?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
-      price: 160,
+      title: ' Everyday Hussle',
+      price: 360,
     },
     {
       imageUrl:
         'https://images.unsplash.com/photo-1508243771214-6e95d137426b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
-      price: 160,
+      title: ' Everyday Hussle 2',
+      price: 460,
     },
     {
       imageUrl:
         'https://plus.unsplash.com/premium_photo-1670090780560-bcb7ee7da281?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
-      price: 160,
+      title: 'Puma Everyday Hussle 3',
+      price: 560,
     },
     {
       imageUrl:
         'https://plus.unsplash.com/premium_photo-1677553954020-68ac75b4e1b4?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle',
-      price: 160,
+      title: 'Puma Everyday Hussle 7',
+      price: 660,
     },
   ];
 
@@ -117,7 +123,19 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
               justifyContent: 'center',
               borderRadius: 52,
             }}>
-            <Icons name="notifications" size={24} color={colors.text} />
+            <View
+              style={{
+                borderWidth: 2,
+                borderRadius: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 40,
+                height: 40,
+                borderColor: colors.border,
+              }}>
+              <Icons name="favorite" size={24} color="red" />
+            </View>
+            <Text style={{color: colors.text, fontWeight: '600'}}>LIKED</Text>
           </TouchableOpacity>
         </View>
 
@@ -245,8 +263,8 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
         />
 
         <MasonryList
-          data={[1, 2, 3, 4, 5, 6]}
-          keyExtractor={item => item.toString()}
+          data={MESONARY_LIST_DATA}
+          keyExtractor={(item, i) => i.toString()} // Use index as key
           numColumns={2}
           contentContainerStyle={{paddingHorizontal: 12}}
           showsVerticalScrollIndicator={false}
@@ -262,7 +280,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                 }}>
                 <Image
                   source={{
-                    uri: 'https://images.unsplash.com/photo-1496346530827-534816eed3be?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    uri: item.imageUrl,
                   }}
                   resizeMode="cover"
                   style={StyleSheet.absoluteFill}
@@ -276,7 +294,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                         fontWeight: '700',
                         color: colors.text,
                       }}>
-                      Puma Everyday Hustle
+                      {item.title}
                     </Text>
                     <View
                       style={{
@@ -322,7 +340,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                         color: '#fff',
                       }}
                       numberOfLines={1}>
-                      ₹560
+                      ₹{item.price}
                     </Text>
                   </View>
                   <TouchableOpacity
@@ -401,7 +419,7 @@ const Card = ({
           borderRadius: 100,
         }}>
         <Text style={{fontSize: 14, fontWeight: '600', color: '#fff'}}>
-          {price}
+          ₹ {price}
         </Text>
       </View>
     </TouchableOpacity>
