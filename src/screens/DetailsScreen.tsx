@@ -1,17 +1,18 @@
 import {View, Text, TouchableOpacity, Image, StatusBar} from 'react-native';
 import React, {useRef, useState} from 'react';
-import {RootStackScreenProps} from '../navigators/Rootnavigator';
+
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
+import {RootStackScreenProps} from '../navigators/Rootnavigator';
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 
 const DetailsScreen = ({
   navigation,
   route: {
-    params: {id},
+    params: {item},
   },
 }: RootStackScreenProps<'Details'>) => {
   const {colors} = useTheme();
@@ -23,14 +24,13 @@ const DetailsScreen = ({
     <View style={{flex: 1}}>
       <Image
         source={{
-          uri: 'https://images.unsplash.com/photo-1492288991661-058aa541ff43?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fG1lbnxlbnwwfHwwfHx8MA%3D%3D',
+          uri: item.imageUrl,
         }}
         style={{flex: 1}}
       />
       <SafeAreaView
         edges={['top']}
         style={{position: 'absolute', top: 0, left: 0, right: 0}}>
-        {/* <StatusBar barStyle={'light-content'} /> */}
         <View
           style={{
             flexDirection: 'row',
@@ -46,10 +46,11 @@ const DetailsScreen = ({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 52,
-              borderColor: '#fff',
-              borderWidth: 1,
+              borderColor: colors.text,
+              borderWidth: 3,
+              backgroundColor: colors.background,
             }}>
-            <Icons name="arrow-back" size={24} color={'#fff'} />
+            <Icons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
 
           <View style={{flex: 1}} />
@@ -62,10 +63,11 @@ const DetailsScreen = ({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 52,
-              borderColor: '#fff',
-              borderWidth: 1,
+              borderColor: colors.text,
+              borderWidth: 3,
+              backgroundColor: colors.background,
             }}>
-            <Icons name="favorite-border" size={24} color={'#fff'} />
+            <Icons name="favorite-border" size={24} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -75,10 +77,11 @@ const DetailsScreen = ({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 52,
-              borderColor: '#fff',
-              borderWidth: 1,
+              borderColor: colors.text,
+              borderWidth: 3,
+              backgroundColor: colors.background,
             }}>
-            <Icons name="add-shopping-cart" size={24} color={'#fff'} />
+            <Icons name="add-shopping-cart" size={24} color={colors.text} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -95,7 +98,7 @@ const DetailsScreen = ({
         }}>
         <View style={{padding: 16, gap: 16, flex: 1}}>
           <Text style={{fontSize: 20, fontWeight: '700', color: colors.text}}>
-            Puma EveryDay Hussle
+            {item.title}
           </Text>
 
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
@@ -188,6 +191,7 @@ const DetailsScreen = ({
               }}>
               {SIZES.map((s, i) => (
                 <TouchableOpacity
+                  key={s}
                   onPress={() => setSize(s)}
                   style={{
                     width: 44,
@@ -221,10 +225,7 @@ const DetailsScreen = ({
               Description
             </Text>
             <Text style={{color: colors.text, opacity: 0.75}} numberOfLines={3}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum
-              commodi magni necessitatibus animi itaque natus pariatur dolore.
-              Autem quibusdam quis beatae voluptates, nihil perspiciatis optio,
-              quae eaque, reprehenderit sed sit.
+              {item.desc}
             </Text>
           </View>
           <View style={{flex: 1}}></View>
@@ -237,7 +238,7 @@ const DetailsScreen = ({
               </Text>
               <Text
                 style={{color: colors.text, fontSize: 18, fontWeight: '600'}}>
-                ₹{(25000).toLocaleString()}
+                ₹{item.price.toLocaleString()}
               </Text>
             </View>
 

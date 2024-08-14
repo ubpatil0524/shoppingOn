@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  TextInput,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTheme} from '@react-navigation/native';
@@ -17,8 +18,31 @@ import CustomBackdrop from '../components/CustomBackdrop';
 import FilterView from '../components/FilterView';
 import {TabsStackScreenProps} from '../navigators/TabsNavigator';
 
+import {
+  newCollection,
+  MESONARY_LIST_DATA,
+  MasonryListItem,
+  ShoesList,
+  AccessoriesList,
+  MuchMoreList,
+  watchList,
+} from '../data/Collections';
+
 const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
   const {colors} = useTheme();
+  const [categoryIndex, setCategoryIndex] = useState<number>(0);
+  const [searchTxt, setSearchTxt] = useState<string>('');
+  const [addFav, setAddFav] = useState<{[key: string]: boolean}>({});
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const [filteredData, setFilteredData] = useState<MasonryListItem[]>([]);
+
+  const addFavPressed = (itemId: string) => {
+    setAddFav(prevFavorites => ({
+      ...prevFavorites,
+      [itemId]: !prevFavorites[itemId],
+    }));
+  };
 
   const categories = [
     'Clothing',
@@ -28,58 +52,41 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
     'many more',
   ];
 
-  interface Item {
-    imageUrl: string;
-    title: string;
-    price: number;
-  }
-
-  const MESONARY_LIST_DATA: Item[] = [
-    {
-      imageUrl:
-        'https://images.unsplash.com/photo-1503001358144-8d7f2c1db9f5?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday ',
-      price: 160,
-    },
-    {
-      imageUrl:
-        'https://plus.unsplash.com/premium_photo-1672239496290-5061cfee7ebb?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma  Hussle',
-      price: 260,
-    },
-    {
-      imageUrl:
-        'https://images.unsplash.com/photo-1496346236646-50e985b31ea4?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: ' Everyday Hussle',
-      price: 360,
-    },
-    {
-      imageUrl:
-        'https://images.unsplash.com/photo-1508243771214-6e95d137426b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: ' Everyday Hussle 2',
-      price: 460,
-    },
-    {
-      imageUrl:
-        'https://plus.unsplash.com/premium_photo-1670090780560-bcb7ee7da281?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle 3',
-      price: 560,
-    },
-    {
-      imageUrl:
-        'https://plus.unsplash.com/premium_photo-1677553954020-68ac75b4e1b4?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Puma Everyday Hussle 7',
-      price: 660,
-    },
-  ];
-
-  const [categoryIndex, setCategoryIndex] = useState(0);
-
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
   const openFilterModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
+
+  useEffect(() => {
+    let data: MasonryListItem[] = [];
+    const selectedCategory = categories[categoryIndex];
+
+    switch (selectedCategory) {
+      case 'Shoes':
+        data = ShoesList;
+        break;
+      case 'Accessories':
+        data = AccessoriesList;
+        break;
+      case 'Watches':
+        data = watchList;
+        break;
+      case 'many more':
+        data = MuchMoreList;
+        break;
+      default:
+        data = MESONARY_LIST_DATA;
+    }
+
+    console.log('Selected Category:', selectedCategory);
+    console.log('Data before filtering:', data);
+
+    const filtered = data.filter(item =>
+      item.title.toLowerCase().includes(searchTxt.toLowerCase()),
+    );
+
+    console.log('Filtered Data:', filtered);
+    setFilteredData(filtered);
+  }, [categoryIndex, searchTxt]);
 
   const handleAddCart = () => {
     console.log('Added');
@@ -87,7 +94,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
 
   return (
     <ScrollView>
-      <SafeAreaView style={{paddingVertical: 24, gap: 24}}>
+      <SafeAreaView style={{paddingVertical: 24, gap: 20}}>
         {/* Header section */}
         <View
           style={{
@@ -148,7 +155,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <TouchableOpacity
+          <View
             style={{
               flex: 1,
               height: 52,
@@ -166,11 +173,13 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
               color={colors.text}
               style={{opacity: 0.5}}
             />
-            <Text
-              style={{flex: 1, fontSize: 16, color: colors.text, opacity: 0.5}}>
-              Search
-            </Text>
-          </TouchableOpacity>
+            <TextInput
+              placeholder="Serach"
+              value={searchTxt}
+              onChangeText={setSearchTxt}
+              style={{flex: 1, fontSize: 16, color: colors.text}}
+            />
+          </View>
           <TouchableOpacity
             onPress={openFilterModal}
             style={{
@@ -186,7 +195,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
         </View>
 
         {/* Grid collection View */}
-        <View style={{paddingHorizontal: 24}}>
+        <View style={{paddingHorizontal: 15}}>
           <View
             style={{
               flexDirection: 'row',
@@ -201,32 +210,22 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
               <Text>See All</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'row', height: 200, gap: 12}}>
-            <View style={{flex: 1}}>
-              <Card
-                onPress={() => {
-                  navigation.navigate('Details', {id: '123'});
-                }}
-                price={160}
-                imageUrl="https://plus.unsplash.com/premium_photo-1677553954020-68ac75b4e1b4?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              />
-            </View>
-            <View style={{flex: 1, gap: 12}}>
-              <Card
-                onPress={() => {
-                  navigation.navigate('Details', {id: '234'});
-                }}
-                price={280}
-                imageUrl="https://images.unsplash.com/photo-1512663150964-d8f43c899f76?q=80&w=1892&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              />
-              <Card
-                onPress={() => {
-                  navigation.navigate('Details', {id: '345'});
-                }}
-                price={370}
-                imageUrl="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              />
-            </View>
+
+          <View style={{gap: 12}}>
+            <FlatList
+              data={newCollection}
+              renderItem={({item}) => (
+                <Card
+                  item={item}
+                  onPress={selectedItem =>
+                    navigation.navigate('Details', {item: selectedItem})
+                  }
+                />
+              )}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={item => item.id}
+            />
           </View>
         </View>
 
@@ -241,7 +240,9 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
             const isSelected = categoryIndex === index;
             return (
               <TouchableOpacity
-                onPress={() => setCategoryIndex(index)}
+                onPress={() => {
+                  setCategoryIndex(index);
+                }}
                 style={{
                   backgroundColor: isSelected ? colors.primary : colors.card,
                   paddingHorizontal: 24,
@@ -263,13 +264,15 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
         />
 
         <MasonryList
-          data={MESONARY_LIST_DATA}
-          keyExtractor={(item, i) => i.toString()} // Use index as key
+          data={filteredData}
+          keyExtractor={(item, i) => i.toString()}
           numColumns={2}
           contentContainerStyle={{paddingHorizontal: 12}}
           showsVerticalScrollIndicator={false}
-          renderItem={({item, i}) => (
-            <View style={{padding: 6}}>
+          renderItem={({item, i}: {item: MasonryListItem; i: number}) => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Details', {item})}
+              style={{padding: 6}}>
               <View
                 style={{
                   aspectRatio: i === 0 ? 1 : 2 / 3,
@@ -296,7 +299,8 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                       }}>
                       {item.title}
                     </Text>
-                    <View
+                    <TouchableOpacity
+                      onPress={() => addFavPressed(item.id)} // Pass the item ID here
                       style={{
                         backgroundColor: colors.background,
                         borderRadius: 100,
@@ -306,11 +310,13 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                         justifyContent: 'center',
                       }}>
                       <Icons
-                        name="favorite-border"
+                        name={addFav[item.id] ? 'favorite' : 'favorite-border'}
                         size={20}
-                        color={colors.text}
+                        color={
+                          addFav[item.id] ? colors.notification : colors.text
+                        }
                       />
-                    </View>
+                    </TouchableOpacity>
                   </View>
                 </View>
 
@@ -357,7 +363,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
           onEndReachedThreshold={0.1}
         />
@@ -377,27 +383,25 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
 export default HomeScreen;
 
 const Card = ({
-  price,
-  imageUrl,
+  item,
   onPress,
 }: {
-  price: number;
-  imageUrl: string;
-  onPress?: () => void;
+  item: MasonryListItem;
+  onPress: (item: MasonryListItem) => void;
 }) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => onPress(item)}
       style={{
         flex: 1,
-        position: 'relative',
         overflow: 'hidden',
         borderRadius: 24,
+        margin: 5,
+        width: 150,
+        height: 250,
       }}>
       <Image
-        source={{
-          uri: imageUrl,
-        }}
+        source={{uri: item.imageUrl}}
         resizeMode="cover"
         style={{
           position: 'absolute',
@@ -407,20 +411,30 @@ const Card = ({
           right: 0,
         }}
       />
-
       <View
         style={{
+          alignItems: 'center',
+          borderRadius: 50,
+          margin: 10,
+          backgroundColor: 'rgba(0,0,0,0.35)',
           position: 'absolute',
-          left: 16,
-          top: 16,
-          paddingHorizontal: 16,
-          paddingVertical: 10,
-          backgroundColor: 'rgba(0,0,0,0.25)',
-          borderRadius: 100,
+          bottom: 0,
+          left: 0,
+          right: 0,
         }}>
-        <Text style={{fontSize: 14, fontWeight: '600', color: '#fff'}}>
-          ₹ {price}
-        </Text>
+        <View
+          style={{
+            padding: 5,
+          }}>
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: '700',
+              color: '#fff',
+            }}>
+            {item.title}
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );

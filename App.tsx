@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/native';
 import React, {useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
-import RootNavigator from './navigators/Rootnavigator';
+import RootNavigator from './src/navigators/Rootnavigator';
 import 'react-native-gesture-handler';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';

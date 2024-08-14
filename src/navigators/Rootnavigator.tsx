@@ -5,12 +5,11 @@ import {
 import TabsNavigator, {TabsStackParamsList} from './TabsNavigator';
 import DetailsScreen from '../screens/DetailsScreen';
 import {NavigatorScreenParams} from '@react-navigation/native';
+import {MasonryListItem} from '../data/Collections';
 
 export type RootStackParamsList = {
   TabsStack: NavigatorScreenParams<TabsStackParamsList>;
-  Details: {
-    id: string;
-  };
+  Details: {item: MasonryListItem};
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamsList>();
