@@ -77,14 +77,12 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
         data = MESONARY_LIST_DATA;
     }
 
-    console.log('Selected Category:', selectedCategory);
-    console.log('Data before filtering:', data);
 
     const filtered = data.filter(item =>
       item.title.toLowerCase().includes(searchTxt.toLowerCase()),
     );
 
-    console.log('Filtered Data:', filtered);
+
     setFilteredData(filtered);
   }, [categoryIndex, searchTxt]);
 
@@ -174,7 +172,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
               style={{opacity: 0.5}}
             />
             <TextInput
-              placeholder="Serach"
+              placeholder="Search"
               value={searchTxt}
               onChangeText={setSearchTxt}
               style={{flex: 1, fontSize: 16, color: colors.text}}
@@ -224,7 +222,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
               )}
               horizontal
               showsHorizontalScrollIndicator={false}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
             />
           </View>
         </View>
@@ -278,7 +276,7 @@ const HomeScreen = ({navigation}: TabsStackScreenProps<'Home'>) => {
                   aspectRatio: i === 0 ? 1 : 2 / 3,
                   position: 'relative',
                   overflow: 'hidden',
-                  backgroundColor: 'red',
+                  backgroundColor: 'grey',
                   borderRadius: 25,
                 }}>
                 <Image

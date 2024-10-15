@@ -18,6 +18,8 @@ export type RootStackScreenProps<T extends keyof RootStackParamsList> =
   NativeStackScreenProps<RootStackParamsList, T>;
 
 const RootNavigator = () => {
+
+  
   return (
     <RootStack.Navigator>
       <RootStack.Screen

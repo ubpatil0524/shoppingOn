@@ -9,6 +9,7 @@ import RootNavigator from './src/navigators/Rootnavigator';
 import 'react-native-gesture-handler';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {Provider} from 'react-redux';
 
 function App() {
   const theme: Theme = useMemo(
@@ -24,13 +25,13 @@ function App() {
     [],
   );
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <NavigationContainer>
-        <BottomSheetModalProvider>
-          <RootNavigator />
-        </BottomSheetModalProvider>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView style={styles.container}>
+        <NavigationContainer>
+          <BottomSheetModalProvider>
+            <RootNavigator />
+          </BottomSheetModalProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
   );
 }
 

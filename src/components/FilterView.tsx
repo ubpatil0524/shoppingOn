@@ -99,7 +99,7 @@ const FilterView = () => {
                 const isSelected = i === 0;
                 return (
                   <Chip
-                    key={`color-${i}`}
+                    key={`sport-${i}`}
                     itemCount={i}
                     label="item"
                     isSelected={i === 0}

@@ -15,11 +15,12 @@ const DetailsScreen = ({
     params: {item},
   },
 }: RootStackScreenProps<'Details'>) => {
+
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
   const [count, setCount] = useState(1);
   const [size, setSize] = useState(SIZES[0]);
-
+ 
   return (
     <View style={{flex: 1}}>
       <Image
@@ -243,6 +244,9 @@ const DetailsScreen = ({
             </View>
 
             <TouchableOpacity
+              onPress={() => {
+                // handleAddToCart()
+              }}
               style={{
                 backgroundColor: colors.primary,
                 height: 64,
